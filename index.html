@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHALE RADAR — EU AI Act Lead Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0a0f; --paper: #f5f2eb; --accent: #ff4d1c; --gold: #c9a84c;
+  --steel: #1a1a2e; --mist: #e8e4da; --signal: #00e5a0; --warn: #ffb800;
+  --dim: #6b6860;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--paper);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.6}
+
+/* HEADER */
+header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:1.5rem 2.5rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{width:40px;height:40px;background:var(--accent);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:16px;animation:pulse-hex 3s ease-in-out infinite}
+@keyframes pulse-hex{0%,100%{box-shadow:0 0 0 0 rgba(255,77,28,0)}50%{box-shadow:0 0 0 12px rgba(255,77,28,.15)}}
+.header-left{display:flex;align-items:center;gap:.8rem}
+.brand{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);font-family:'Space Mono',monospace}
+.title-center h1{font-size:clamp(1.2rem,2.5vw,1.8rem);font-weight:800;letter-spacing:-.02em;text-align:center}
+.title-center h1 span{color:var(--accent)}
+.header-right{display:flex;justify-content:flex-end;align-items:center;gap:.75rem}
+.deadline-pill{background:rgba(255,184,0,.12);border:1px solid rgba(255,184,0,.3);border-radius:100px;padding:.35rem .9rem;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--warn);display:flex;align-items:center;gap:.4rem}
+.deadline-pill::before{content:'';width:5px;height:5px;background:var(--warn);border-radius:50%;animation:blink 1.2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid rgba(255,255,255,.06)}
+.stat{padding:1.2rem 2rem;border-right:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden}
+.stat:last-child{border-right:none}
+.stat-value{font-size:2.4rem;font-weight:800;line-height:1;letter-spacing:-.04em;margin-bottom:.25rem}
+.stat-value.accent{color:var(--accent)}.stat-value.signal{color:var(--signal)}.stat-value.gold{color:var(--gold)}.stat-value.warn{color:var(--warn)}
+.stat-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.stat-bg{position:absolute;right:-5px;bottom:-5px;font-size:4rem;opacity:.04;font-weight:800;pointer-events:none;line-height:1}
+
+/* CONTROLS */
+.controls{display:flex;align-items:center;gap:1rem;padding:1.2rem 2.5rem;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.btn{border:none;border-radius:6px;padding:.7rem 1.5rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:all .2s;letter-spacing:.02em}
+.btn-start{background:var(--signal);color:#000}.btn-start:hover{background:#00ffb3;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,229,160,.3)}
+.btn-stop{background:rgba(255,77,28,.15);color:var(--accent);border:1px solid rgba(255,77,28,.3)}.btn-stop:hover{background:rgba(255,77,28,.25)}
+.btn-reset{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.1)}.btn-reset:hover{background:rgba(255,255,255,.1);color:var(--paper)}
+.btn-download{background:var(--gold);color:#000;margin-left:auto}.btn-download:hover{background:#e0ba5a;transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.max-firms-wrap{display:flex;align-items:center;gap:.5rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--dim)}
+.max-firms-wrap input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:.4rem .6rem;color:var(--paper);font-family:'Space Mono',monospace;font-size:.65rem;width:80px;outline:none}
+.max-firms-wrap input:focus{border-color:var(--accent)}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{height:3px;background:rgba(255,255,255,.06);position:relative;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--warn));transition:width .5s ease;width:0%}
+.progress-bar.pulse{animation:bar-pulse 1.5s ease-in-out infinite}
+@keyframes bar-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* MAIN */
+.main{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 260px)}
+
+/* LOG PANEL */
+.log-panel{border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
+.panel-title{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.5rem}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);flex-shrink:0}
+.status-dot.running{background:var(--signal);animation:blink .8s ease infinite}
+.log-list{flex:1;overflow-y:auto;padding:.75rem;font-family:'Space Mono',monospace;font-size:.62rem;line-height:1.7;color:var(--dim);display:flex;flex-direction:column;gap:.1rem;max-height:calc(100vh - 320px)}
+.log-entry{padding:.2rem .4rem;border-radius:3px;word-break:break-all}
+.log-entry.ai{color:var(--signal);background:rgba(0,229,160,.05)}
+.log-entry.contact{color:var(--gold);background:rgba(201,168,76,.05)}
+.log-entry.complete{color:var(--warn);font-weight:700}
+.log-entry.error{color:var(--accent);background:rgba(255,77,28,.08)}
+.log-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);font-family:'Space Mono',monospace;font-size:.65rem;text-align:center;padding:2rem}
+
+/* RESULTS PANEL */
+.results-panel{display:flex;flex-direction:column}
+.table-header{display:grid;grid-template-columns:170px 160px 90px 120px 1fr 36px;gap:.75rem;padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
+.leads-list{flex:1;overflow-y:auto;max-height:calc(100vh - 340px)}
+.lead-row{display:grid;grid-template-columns:170px 160px 90px 120px 1fr 36px;gap:.75rem;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center;cursor:pointer;transition:background .15s;animation:row-in .3s ease both}
+.lead-row:hover{background:rgba(255,255,255,.03)}
+.lead-row.selected{background:rgba(255,77,28,.06);border-left:2px solid var(--accent)}
+@keyframes row-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.lead-name{font-weight:700;font-size:.8rem;line-height:1.2}
+.lead-title{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--dim);margin-top:.1rem}
+.lead-firm{font-size:.78rem;color:var(--mist)}
+.ai-badge{display:inline-flex;align-items:center;gap:.25rem;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:3px;padding:.2rem .4rem;font-family:'Space Mono',monospace;font-size:.55rem;color:var(--signal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ai-badge.none{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:var(--dim)}
+.email-cell{font-family:'Space Mono',monospace;font-size:.6rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hook-preview{font-size:.68rem;color:var(--dim);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.expand-btn{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .15s;flex-shrink:0}
+.expand-btn:hover{background:var(--accent);color:#fff}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem;text-align:center;gap:1rem;color:var(--dim);height:200px}
+.empty-icon{font-size:2.5rem;opacity:.3}
+
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:460px;background:#111118;border-left:1px solid rgba(255,255,255,.1);z-index:101;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-top{padding:1.5rem 2rem;border-bottom:1px solid rgba(255,255,255,.08);position:relative}
+.drawer-close{position:absolute;top:1.25rem;right:1.25rem;width:28px;height:28px;background:rgba(255,255,255,.06);border:none;border-radius:50%;color:var(--paper);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.drawer-close:hover{background:var(--accent)}
+.drawer-name{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.25rem}
+.drawer-sub{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--gold)}
+.drawer-body{padding:1.5rem 2rem;display:flex;flex-direction:column;gap:1.25rem}
+.dsec-title{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:.6rem}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.info-cell{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;padding:.65rem}
+.info-label{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem}
+.info-val{font-size:.75rem;font-weight:600;word-break:break-all}
+.hook-box{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:7px;padding:1.1rem}
+.hook-text{font-size:.78rem;line-height:1.6;color:var(--mist)}
+.hook-text strong{color:var(--gold)}
+.copy-btn{margin-top:.6rem;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.25);border-radius:4px;padding:.45rem .9rem;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gold);cursor:pointer;transition:all .15s;letter-spacing:.1em}
+.copy-btn:hover{background:rgba(201,168,76,.25)}
+.copy-btn.copied{color:var(--signal);border-color:var(--signal);background:rgba(0,229,160,.1)}
+
+/* TICKER */
+.ticker{border-top:1px solid rgba(255,255,255,.06);background:rgba(255,77,28,.04);padding:.5rem 2rem;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--dim);white-space:nowrap;overflow:hidden}
+.ticker-inner{display:inline-block;animation:ticker-scroll 50s linear infinite}
+@keyframes ticker-scroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-mark">🐋</div>
+    <div>
+      <div style="font-size:1rem;font-weight:800;letter-spacing:-.02em">WHALE RADAR</div>
+      <div class="brand">EU AI Act · Lead Engine v2</div>
+    </div>
+  </div>
+  <div class="title-center"><h1>B2B Lead <span>Intelligence</span></h1></div>
+  <div class="header-right">
+    <div class="deadline-pill">ART. 14 DEADLINE: AUG 2, 2026</div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value accent" id="s-total">0</div><div class="stat-label">Total Leads</div><div class="stat-bg">W</div></div>
+  <div class="stat"><div class="stat-value signal" id="s-ai">0</div><div class="stat-label">AI Signal</div><div class="stat-bg">AI</div></div>
+  <div class="stat"><div class="stat-value gold" id="s-email">0</div><div class="stat-label">Emails Found</div><div class="stat-bg">@</div></div>
+  <div class="stat"><div class="stat-value warn" id="s-progress">0</div><div class="stat-label">Firms Scraped</div><div class="stat-bg">F</div></div>
+  <div class="stat"><div class="stat-value" id="s-days">—</div><div class="stat-label">Days to Deadline</div><div class="stat-bg">D</div></div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-start" id="btn-start" onclick="startJob()">▶ Start Scraping</button>
+  <button class="btn btn-stop"  id="btn-stop"  onclick="stopJob()"  disabled>■ Stop</button>
+  <button class="btn btn-reset" id="btn-reset" onclick="resetJob()">↺ Reset</button>
+  <div class="max-firms-wrap">
+    Max firms: <input type="number" id="max-firms" value="500" min="10" max="99999">
+  </div>
+  <button class="btn btn-download" id="btn-dl" onclick="downloadCSV()" disabled>↓ Download CSV</button>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progress-bar"></div>
+</div>
+
+<div class="main">
+  <div class="log-panel">
+    <div class="panel-title">
+      <span class="status-dot" id="status-dot"></span>
+      Live Activity Log
+    </div>
+    <div class="log-list" id="log-list">
+      <div class="log-empty">Press ▶ Start to begin scraping</div>
+    </div>
+  </div>
+
+  <div class="results-panel">
+    <div class="table-header">
+      <span>Contact</span><span>Firm</span><span>AI Tool</span>
+      <span>Email</span><span>Forensic Hook</span><span></span>
+    </div>
+    <div class="leads-list" id="leads-list">
+      <div class="empty-state">
+        <div class="empty-icon">🐋</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.65rem">Leads will appear here in real time</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker"><div class="ticker-inner" id="ticker">WHALE RADAR · EU AI Act Article 14 · August 2, 2026 Deadline · Managing Partners · Heads of Professional Indemnity · UK & US Law Firms · Harvey AI · Microsoft Copilot · Luminance · Real-Time Lead Intelligence</div></div>
+
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-top">
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <div class="drawer-name" id="d-name">—</div>
+    <div class="drawer-sub"  id="d-sub">—</div>
+  </div>
+  <div class="drawer-body">
+    <div><div class="dsec-title">Contact Details</div><div class="info-grid" id="d-info"></div></div>
+    <div>
+      <div class="dsec-title">🎯 Forensic Hook — Copy & Send</div>
+      <div class="hook-box">
+        <div class="hook-text" id="d-hook"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyHook()">⎘ COPY TO CLIPBOARD</button>
+      </div>
+    </div>
+    <div>
+      <div class="dsec-title">EU AI Act Article 14 Context</div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;padding:.9rem;font-size:.72rem;line-height:1.6;color:var(--dim)">
+        Article 14 requires human oversight mechanisms for high-risk AI systems. Law firms using AI in professional indemnity workflows must document oversight protocols, maintain audit trails, and demonstrate human review capability before <strong style="color:var(--warn)">August 2, 2026</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let leads = [];
+let selectedLead = null;
+let pollInterval = null;
+let seenLeadCount = 0;
+
+// ── Deadline counter ──
+(function(){
+  const d = Math.ceil((new Date('2026-08-02') - new Date()) / 86400000);
+  const el = document.getElementById('s-days');
+  el.textContent = d;
+  el.className = 'stat-value ' + (d < 90 ? 'accent' : d < 180 ? 'warn' : '');
+})();
+
+// ── Job controls ──
+async function startJob() {
+  const max = parseInt(document.getElementById('max-firms').value) || 500;
+  await fetch('/api/start', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({max_firms: max})});
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-stop').disabled  = false;
+  document.getElementById('btn-reset').disabled = true;
+  document.getElementById('status-dot').className = 'status-dot running';
+  document.getElementById('progress-bar').classList.add('pulse');
+  document.getElementById('log-list').innerHTML = '';
+  startPolling();
+}
+
+async function stopJob() {
+  await fetch('/api/stop', {method:'POST'});
+}
+
+async function resetJob() {
+  if (!confirm('Reset everything? This will delete all results and the checkpoint.')) return;
+  await fetch('/api/reset', {method:'POST'});
+  leads = []; seenLeadCount = 0;
+  document.getElementById('leads-list').innerHTML = `<div class="empty-state"><div class="empty-icon">🐋</div><div style="font-family:'Space Mono',monospace;font-size:.65rem">Leads will appear here in real time</div></div>`;
+  document.getElementById('log-list').innerHTML = `<div class="log-empty">Press ▶ Start to begin scraping</div>`;
+  ['s-total','s-ai','s-email','s-progress'].forEach(id => document.getElementById(id).textContent = '0');
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('btn-dl').disabled = true;
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-stop').disabled  = true;
+  document.getElementById('btn-reset').disabled = false;
+}
+
+function downloadCSV() {
+  window.location.href = '/api/download';
+}
+
+// ── Polling ──
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(poll, 2000);
+}
+
+async function poll() {
+  try {
+    const r = await fetch('/api/status');
+    const data = await r.json();
+    updateUI(data);
+    if (!data.running && pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+      onJobFinished(data);
+    }
+  } catch(e) { console.error('Poll error:', e); }
+}
+
+function updateUI(data) {
+  // Stats
+  animCount('s-total',    data.leads.length);
+  animCount('s-ai',       data.leads.filter(l => l['AI Tool Mentioned']).length);
+  animCount('s-email',    data.leads.filter(l => l['Email']).length);
+  animCount('s-progress', data.progress);
+
+  // Progress bar
+  if (data.total > 0) {
+    const pct = Math.min(100, (data.progress / data.total) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  // Log
+  const logList = document.getElementById('log-list');
+  const newLogs = data.log;
+  if (logList.children.length === 1 && logList.children[0].classList.contains('log-empty')) {
+    logList.innerHTML = '';
+  }
+  // Only append truly new log entries
+  const currentCount = logList.children.length;
+  if (newLogs.length > currentCount) {
+    newLogs.slice(currentCount).forEach(entry => {
+      const div = document.createElement('div');
+      div.className = 'log-entry' +
+        (entry.includes('AI signal') ? ' ai' :
+         entry.includes('contact') || entry.includes('👤') ? ' contact' :
+         entry.includes('COMPLETE') ? ' complete' :
+         entry.includes('ERROR') ? ' error' : '');
+      div.textContent = entry;
+      logList.appendChild(div);
+    });
+    logList.scrollTop = logList.scrollHeight;
+  }
+
+  // New leads
+  if (data.leads.length > seenLeadCount) {
+    const newLeads = data.leads.slice(seenLeadCount);
+    leads = data.leads;
+    seenLeadCount = data.leads.length;
+    renderNewLeads(newLeads);
+
+    // Update ticker
+    const aiLeads = leads.filter(l => l['AI Tool Mentioned']);
+    if (aiLeads.length > 0) {
+      document.getElementById('ticker').textContent = aiLeads
+        .map(l => `🐋 ${l.Firm} — ${l['AI Tool Mentioned']} detected — Article 14 exposure`)
+        .join('   ·   ');
+    }
+
+    document.getElementById('btn-dl').disabled = false;
+  }
+}
+
+function renderNewLeads(newLeads) {
+  const list = document.getElementById('leads-list');
+  // Remove empty state if present
+  if (list.querySelector('.empty-state')) list.innerHTML = '';
+
+  newLeads.forEach((l, i) => {
+    const div = document.createElement('div');
+    div.className = 'lead-row';
+    div.style.animationDelay = (i * 0.05) + 's';
+    div.onclick = () => openDrawer(leads.indexOf(l));
+    div.innerHTML = `
+      <div><div class="lead-name">${esc(l.Name)}</div><div class="lead-title">${esc(l.Title)}</div></div>
+      <div class="lead-firm">${esc(l.Firm)}</div>
+      <div>${l['AI Tool Mentioned']
+        ? `<div class="ai-badge">● ${esc(l['AI Tool Mentioned'])}</div>`
+        : `<div class="ai-badge none">— none</div>`}</div>
+      <div class="email-cell" style="color:${l.Email ? 'var(--signal)' : 'var(--dim)'}">${l.Email ? '✓ ' + esc(l.Email) : '—'}</div>
+      <div class="hook-preview">${esc(l['Forensic Hook'])}</div>
+      <button class="expand-btn" onclick="event.stopPropagation();openDrawer(${leads.indexOf(l)})">→</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function onJobFinished(data) {
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-stop').disabled  = true;
+  document.getElementById('btn-reset').disabled = false;
+  document.getElementById('status-dot').className = 'status-dot';
+  document.getElementById('progress-bar').classList.remove('pulse');
+  if (data.error) {
+    const log = document.getElementById('log-list');
+    const div = document.createElement('div');
+    div.className = 'log-entry error';
+    div.textContent = '❌ Error: ' + data.error;
+    log.appendChild(div);
+  }
+}
+
+// ── Drawer ──
+function openDrawer(idx) {
+  const l = leads[idx];
+  if (!l) return;
+  selectedLead = l;
+
+  document.getElementById('d-name').textContent = l.Name;
+  document.getElementById('d-sub').textContent  = `${l.Title} · ${l.Firm}`;
+
+  document.getElementById('d-info').innerHTML = `
+    <div class="info-cell"><div class="info-label">Email</div><div class="info-val" style="color:${l.Email?'var(--signal)':'var(--dim)'}">${l.Email||'— not found'}</div></div>
+    <div class="info-cell"><div class="info-label">Phone</div><div class="info-val">${l.Phone||'— not found'}</div></div>
+    <div class="info-cell"><div class="info-label">AI Tool</div><div class="info-val" style="color:${l['AI Tool Mentioned']?'var(--signal)':'var(--dim)'}">${l['AI Tool Mentioned']||'— none detected'}</div></div>
+    <div class="info-cell"><div class="info-label">Risk Level</div><div class="info-val" style="color:var(--accent)">${l['AI Tool Mentioned']?'HIGH — Art. 14':'MEDIUM'}</div></div>
+  `;
+
+  let h = esc(l['Forensic Hook'])
+    .replace(esc(l.Firm), `<strong>${esc(l.Firm)}</strong>`)
+    .replace('August 2nd, 2026', '<strong style="color:var(--accent)">August 2nd, 2026</strong>');
+  if (l['AI Tool Mentioned']) h = h.replace(esc(l['AI Tool Mentioned']), `<strong>${esc(l['AI Tool Mentioned'])}</strong>`);
+  document.getElementById('d-hook').innerHTML = h;
+
+  document.getElementById('copy-btn').textContent = '⎘ COPY TO CLIPBOARD';
+  document.getElementById('copy-btn').className = 'copy-btn';
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  selectedLead = null;
+}
+
+function copyHook() {
+  if (!selectedLead) return;
+  navigator.clipboard.writeText(selectedLead['Forensic Hook']).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ COPIED!';
+    btn.className = 'copy-btn copied';
+    setTimeout(() => { btn.textContent = '⎘ COPY TO CLIPBOARD'; btn.className = 'copy-btn'; }, 2000);
+  });
+}
+
+// ── Utils ──
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const _counts = {};
+function animCount(id, target) {
+  const el = document.getElementById(id);
+  const start = _counts[id] || 0;
+  _counts[id] = target;
+  if (start === target) return;
+  const dur = 400, t0 = performance.now();
+  (function step(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    el.textContent = Math.round(start + (target - start) * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+// Poll on load to restore state if job already running
+poll();
+</script>
+</body>
+</html>
